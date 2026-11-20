@@ -42,15 +42,37 @@ def clean_text(raw_text: Optional[str]) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+def parse_bigkinds_timestamp(news_id: Optional[str], date_str: Optional[str]) -> datetime:
+    """빅카인즈 NEWS_ID에서 초 단위 KST 발행시각 추출 후 UTC로 변환 (예: 04100608.20261120112528001 -> 11:25:28 KST)
+    NEWS_ID가 없거나 파싱 실패 시 DATE(YYYYMMDD) 필드 또는 현재 시각 사용
+    """
+    if news_id and "." in news_id:
+        try:
+            part = news_id.split(".")[1]
+            m = re.match(r"^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})", part)
+            if m:
+                kst = timezone(timedelta(hours=9))
+                dt = datetime(
+                    int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                    int(m.group(4)), int(m.group(5)), int(m.group(6)),
+                    tzinfo=kst
+                )
+                return dt.astimezone(timezone.utc)
+        except Exception:
+            pass
+    if date_str:
+        try:
+            kst = timezone(timedelta(hours=9))
+            dt = datetime.strptime(str(date_str).strip(), "%Y%m%d").replace(tzinfo=kst)
+            return dt.astimezone(timezone.utc)
+        except Exception:
+            pass
+    return datetime.now(timezone.utc)
+
+
 def parse_date(date_str: Optional[str]) -> datetime:
-    """빅카인즈 DATE 형식 (YYYYMMDD)을 datetime으로 변환"""
-    if not date_str:
-        return datetime.now(timezone.utc)
-    try:
-        dt = datetime.strptime(str(date_str).strip(), "%Y%m%d")
-        return dt.replace(tzinfo=timezone.utc)
-    except Exception:
-        return datetime.now(timezone.utc)
+    """빅카인즈 DATE 형식 (YYYYMMDD)을 datetime으로 변환 (하위 호환용)"""
+    return parse_bigkinds_timestamp(None, date_str)
 
 
 def parse_image_url(images_field: Optional[str]) -> Optional[str]:
@@ -128,7 +150,7 @@ async def fetch_category_from_bigkinds(
             provider = row.get("PROVIDER", "빅카인즈").strip()
             author = row.get("BYLINE", "").strip() or None
             image_url = parse_image_url(row.get("IMAGES"))
-            published_at = parse_date(row.get("DATE"))
+            published_at = parse_bigkinds_timestamp(news_id, row.get("DATE"))
 
             items.append({
                 "guid": news_id,

@@ -111,7 +111,7 @@ async def save_news_batch(articles: List[Dict[str, Any]]) -> Tuple[int, int]:
             for i in range(0, len(prepared_records), chunk_size):
                 chunk = prepared_records[i : i + chunk_size]
                 res = supabase_client.table("news").upsert(
-                    chunk, on_conflict="link", ignore_duplicates=True
+                    chunk, on_conflict="link"
                 ).execute()
                 if res.data:
                     inserted_count += len(res.data)
@@ -149,9 +149,15 @@ async def save_news_batch(articles: List[Dict[str, Any]]) -> Tuple[int, int]:
 
         cursor.executemany(
             """
-            INSERT OR IGNORE INTO news 
+            INSERT INTO news 
             (guid, title, link, summary, content, source, category, category_code, image_url, author, published_at, crawled_at, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(link) DO UPDATE SET
+                published_at = excluded.published_at,
+                crawled_at = excluded.crawled_at,
+                summary = excluded.summary,
+                content = excluded.content,
+                image_url = excluded.image_url
             """,
             insert_rows
         )

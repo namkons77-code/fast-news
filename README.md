@@ -1,7 +1,7 @@
 # 📰 FastNews — FastAPI & React 기반 실시간 뉴스 크롤링 플랫폼
 
 > **FastAPI** 백엔드와 **React** 프론트엔드로 구축된 카테고리별 RSS 실시간 뉴스 수집 및 제공 사이트입니다.  
-> **Python APScheduler**를 통해 **1시간마다 주기적으로 자동 크롤링**을 수행하며, 수집된 기사는 **Supabase (PostgreSQL)** DB에 저장되어 웹 UI를 통해 실시간으로 제공됩니다.
+> **Python APScheduler**를 통해 **15분마다 주기적으로 자동 크롤링**을 수행하며, 수집된 기사는 **Supabase (PostgreSQL)** DB에 저장되어 웹 UI를 통해 실시간으로 제공됩니다.
 
 ---
 
@@ -19,8 +19,8 @@
    - **스포츠 (sports)**: 축구, 야구, 농구, 해외 스포츠 소식
    - **IT과학 (it_science)**: AI, 모바일, 반도체, 우주/과학 등 최신 IT 소식
 
-2. **APScheduler 1시간 주기 자동 크롤러**
-   - 백그라운드에서 `AsyncIOScheduler`가 1시간 간격(`IntervalTrigger(hours=1)`)으로 자동 실행
+2. **APScheduler 15분 주기 자동 크롤러**
+   - 백그라운드에서 `AsyncIOScheduler`가 15분 간격(`IntervalTrigger(minutes=15)`)으로 자동 실행
    - 중복 기사 수집 방지 (고유 URL 및 GUID 기반 중복 제거)
    - UI 상단 '지금 크롤링' 버튼 또는 `POST /api/crawler/run` API를 통한 **수동 즉시 크롤링** 지원
 
@@ -42,7 +42,7 @@
 
 - **Backend**:
   - Python 3.10+ (FastAPI, Uvicorn)
-  - `APScheduler` (1시간 주기 비동기 스케줄링)
+  - `APScheduler` (15분 주기 비동기 스케줄링)
   - `feedparser`, `beautifulsoup4`, `httpx` (RSS 피드 파싱 & 웹 데이터 정제)
   - `supabase` (Supabase 공식 파이썬 클라이언트)
   - `pydantic-settings`
@@ -62,7 +62,7 @@ fastapi-news/
 │   │   ├── config.py             # 환경설정 및 CORS
 │   │   ├── database.py           # Supabase 연동 & SQLite 폴백 어댑터
 │   │   ├── main.py               # FastAPI 엔트리포인트 및 lifespan
-│   │   ├── scheduler.py          # APScheduler 1시간 주기 설정
+│   │   ├── scheduler.py          # APScheduler 15분 주기 설정
 │   │   ├── crawler/
 │   │   │   ├── feeds.py          # 8대 카테고리 RSS 피드 URL 매핑
 │   │   │   └── rss_crawler.py    # RSS 파싱, 썸네일/요약 추출 로직

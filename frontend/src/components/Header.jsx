@@ -28,7 +28,7 @@ export default function Header({
                 </span>
               </div>
               <p className="text-xs text-slate-500 hidden sm:block">
-                카테고리별 RSS 수집 · 1시간 주기 APScheduler · Supabase DB
+                카테고리별 RSS 수집 · 15분 주기 APScheduler · Supabase DB
               </p>
             </div>
           </div>
@@ -54,7 +54,7 @@ export default function Header({
               title="스케줄러 정보 보기"
             >
               <Clock className="w-3.5 h-3.5 text-blue-600" />
-              <span className="hidden sm:inline">1시간 주기</span>
+              <span className="hidden sm:inline">15분 주기</span>
               {crawlStatus?.last_run_at && (
                 <span className="text-blue-500 hidden lg:inline">
                   ({formatTimeAgo(crawlStatus.last_run_at)})

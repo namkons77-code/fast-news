@@ -1,8 +1,8 @@
 import re
 import html
 import asyncio
+import calendar
 from datetime import datetime, timezone
-from time import mktime
 from typing import List, Dict, Any, Optional
 import feedparser
 from bs4 import BeautifulSoup
@@ -69,11 +69,11 @@ def extract_image_url(entry: Any) -> Optional[str]:
 
 
 def parse_published_date(entry: Any) -> datetime:
-    """발행일 파싱 (실패 시 현재 시각)"""
+    """발행일 파싱 (feedparser의 UTC struct_time을 calendar.timegm을 통해 오차 없이 UTC datetime으로 변환)"""
     time_struct = getattr(entry, "published_parsed", None) or getattr(entry, "updated_parsed", None)
     if time_struct:
         try:
-            return datetime.fromtimestamp(mktime(time_struct), tz=timezone.utc)
+            return datetime.fromtimestamp(calendar.timegm(time_struct), tz=timezone.utc)
         except Exception:
             pass
     return datetime.now(timezone.utc)

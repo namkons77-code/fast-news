@@ -14,13 +14,11 @@ async def lifespan(app: FastAPI):
     # 1. APScheduler 시작 (15분 주기 크롤링 등록)
     news_scheduler.start()
 
-    # 2. 서버 기동 시 초기 데이터 확인 및 필요 시 즉시 초기 크롤링 백그라운드 실행
+    # 2. 서버 기동 시 최신 기사 즉시 크롤링 백그라운드 실행
     if settings.CRAWL_ON_STARTUP:
         async def initial_crawl_task():
-            total = await get_total_news_count()
-            if total < 10:
-                print("[Lifespan] DB에 기사가 부족하여 서버 시작 즉시 초기 크롤링을 실행합니다...")
-                await news_scheduler.execute_crawl(trigger_type="startup")
+            print("[Lifespan] 서버 시작 즉시 최신 기사 크롤링을 백그라운드로 실행합니다...")
+            await news_scheduler.execute_crawl(trigger_type="startup")
 
         asyncio.create_task(initial_crawl_task())
 
