@@ -17,7 +17,7 @@ class NewsSchedulerService:
         self.last_run_at: Optional[datetime] = None
         self.last_crawl_result: Optional[Dict[str, Any]] = None
         self._lock = asyncio.Lock()
-        self.job_id = "hourly_news_crawl_job"
+        self.job_id = "news_crawl_job"
 
     async def execute_crawl(self, trigger_type: str = "scheduled") -> Dict[str, Any]:
         """크롤링 실행 함수: 빅카인즈(BigKinds) + RSS 피드 하이브리드 수집"""
@@ -125,19 +125,19 @@ class NewsSchedulerService:
                 self.is_crawling = False
 
     def start(self):
-        """스케줄러 시작 (1시간 간격 설정)"""
+        """스케줄러 시작 (15분 간격 설정)"""
         if not self.scheduler.running:
-            interval_hours = settings.CRAWL_INTERVAL_HOURS
+            interval_minutes = getattr(settings, "CRAWL_INTERVAL_MINUTES", 15)
             self.scheduler.add_job(
                 self.execute_crawl,
-                trigger=IntervalTrigger(hours=interval_hours),
+                trigger=IntervalTrigger(minutes=interval_minutes),
                 id=self.job_id,
-                name="1시간 주기 뉴스 크롤링 (빅카인즈 & RSS)",
+                name=f"{interval_minutes}분 주기 뉴스 크롤링 (빅카인즈 & RSS)",
                 replace_existing=True,
                 kwargs={"trigger_type": "scheduled"}
             )
             self.scheduler.start()
-            print(f"[Scheduler] APScheduler 시작 완료 (주기: {interval_hours}시간)")
+            print(f"[Scheduler] APScheduler 시작 완료 (주기: {interval_minutes}분)")
 
     def shutdown(self):
         """스케줄러 종료"""
@@ -155,13 +155,15 @@ class NewsSchedulerService:
 
         total_news = await get_total_news_count()
         db_mode = get_db_mode()
+        interval_minutes = getattr(settings, "CRAWL_INTERVAL_MINUTES", 15)
 
         return {
             "is_running": self.is_crawling,
             "scheduler_active": self.scheduler.running,
             "last_run_at": self.last_run_at,
             "next_run_at": next_run_at,
-            "interval_hours": settings.CRAWL_INTERVAL_HOURS,
+            "interval_minutes": interval_minutes,
+            "interval_hours": round(interval_minutes / 60.0, 2),
             "db_mode": db_mode,
             "total_news_count": total_news,
             "last_crawl_result": self.last_crawl_result

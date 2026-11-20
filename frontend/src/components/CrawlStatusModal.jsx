@@ -52,7 +52,7 @@ export default function CrawlStatusModal({
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-blue-600" />
                 <span className="text-xs font-bold text-slate-800">
-                  APScheduler 1시간 자동 크롤러
+                  APScheduler 15분 자동 크롤러
                 </span>
               </div>
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800">
@@ -63,7 +63,9 @@ export default function CrawlStatusModal({
             <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3 pt-2 border-t border-slate-200/60">
               <div>
                 <span className="text-slate-400">실행 주기:</span>{' '}
-                <strong className="text-slate-800">{status.interval_hours}시간 간격</strong>
+                <strong className="text-slate-800">
+                  {status.interval_minutes ? `${status.interval_minutes}분 간격` : '15분 간격'}
+                </strong>
               </div>
               <div>
                 <span className="text-slate-400">현재 상태:</span>{' '}
@@ -153,7 +155,7 @@ export default function CrawlStatusModal({
         {/* 하단 수동 크롤링 실행 버튼 */}
         <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
           <span className="text-[11px] text-slate-400">
-            주기적인 1시간 자동 수집 외에도 언제든 즉시 수집할 수 있습니다.
+            주기적인 15분 자동 수집 외에도 언제든 즉시 수집할 수 있습니다.
           </span>
           <button
             onClick={() => {

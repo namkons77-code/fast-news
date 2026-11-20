@@ -88,13 +88,13 @@ export default function TrendingSidebar({
           <h3 className="text-sm font-bold">FastNews 엔진 상태</h3>
         </div>
         <p className="text-xs text-slate-300 leading-relaxed mb-4">
-          APScheduler가 1시간마다 빅카인즈 54개 언론사 및 RSS 피드를 실시간으로 교차 수집하여 Supabase DB에 적재합니다.
+          APScheduler가 15분마다 빅카인즈 54개 언론사 및 RSS 피드를 실시간으로 교차 수집하여 Supabase DB에 적재합니다.
         </p>
 
         <div className="space-y-2 text-xs border-t border-slate-800 pt-3">
           <div className="flex justify-between">
             <span className="text-slate-400">스케줄러 주기:</span>
-            <strong className="text-blue-400">1시간 자동 크롤링</strong>
+            <strong className="text-blue-400">15분 자동 크롤링</strong>
           </div>
           <div className="flex justify-between">
             <span className="text-slate-400">데이터베이스:</span>

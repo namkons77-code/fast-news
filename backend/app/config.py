@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     SUPABASE_KEY: Optional[str] = None
 
     # Crawler Settings
+    CRAWL_INTERVAL_MINUTES: int = 15
     CRAWL_INTERVAL_HOURS: int = 1
     CRAWL_ON_STARTUP: bool = True
     NEWS_PER_FEED_LIMIT: int = 30

@@ -8,7 +8,7 @@ router = APIRouter(prefix="/api/crawler", tags=["Crawler"])
 
 @router.get("/status", response_model=CrawlStatusResponse)
 async def get_crawler_status():
-    """크롤러 및 1시간 주기 스케줄러 상태 조회"""
+    """크롤러 및 15분 주기 스케줄러 상태 조회"""
     return await news_scheduler.get_status()
 
 
