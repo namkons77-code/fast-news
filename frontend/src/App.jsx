@@ -113,7 +113,7 @@ export default function App() {
           </div>
         )}
 
-        {/* 상단 네비게이션 헤더 (홈 '/' vs 전체피드 '/frontend' 탭) */}
+        {/* 상단 네비게이션 헤더 (홈 '/' vs 전체피드 '/feed' 탭) */}
         <Navbar
           crawlStatus={crawlStatus}
           onTriggerCrawl={handleTriggerCrawl}
@@ -139,9 +139,9 @@ export default function App() {
               }
             />
 
-            {/* 기존 피드 및 카테고리 필터 페이지: /frontend */}
+            {/* 전체 기사 피드 및 카테고리 필터 페이지: /feed */}
             <Route
-              path="/frontend"
+              path="/feed"
               element={
                 <FeedPage
                   onSelectNews={(n) => setSelectedNews(n)}
@@ -151,6 +151,9 @@ export default function App() {
                 />
               }
             />
+
+            {/* 기존 /frontend 접속 시 /feed 로 자동 리다이렉트 */}
+            <Route path="/frontend" element={<Navigate to="/feed" replace />} />
 
             {/* 기타 경로는 홈으로 리다이렉트 */}
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -163,7 +166,7 @@ export default function App() {
             <div className="flex items-center justify-center gap-4 text-slate-600 font-semibold text-xs">
               <a href="/" className="hover:text-blue-600">추천 홈 (Magazine)</a>
               <span>·</span>
-              <a href="/frontend" className="hover:text-blue-600">전체 기사 피드 (/frontend)</a>
+              <a href="/feed" className="hover:text-blue-600">전체 기사 피드 (/feed)</a>
               <span>·</span>
               <button onClick={() => setShowStatusModal(true)} className="hover:text-blue-600">스케줄러 상태</button>
             </div>

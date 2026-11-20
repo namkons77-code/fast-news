@@ -14,6 +14,10 @@ CATEGORIES = [
                 "url": "https://www.yna.co.kr/rss/politics.xml"
             },
             {
+                "source": "경향신문",
+                "url": "https://www.khan.co.kr/rss/rssdata/politic_news.xml"
+            },
+            {
                 "source": "구글뉴스",
                 "url": "https://news.google.com/rss/headlines/section/topic/POLITICS?hl=ko&gl=KR&ceid=KR:ko"
             }
@@ -27,6 +31,10 @@ CATEGORIES = [
             {
                 "source": "연합뉴스",
                 "url": "https://www.yna.co.kr/rss/economy.xml"
+            },
+            {
+                "source": "경향신문",
+                "url": "https://www.khan.co.kr/rss/rssdata/economy_news.xml"
             },
             {
                 "source": "구글뉴스",
@@ -44,6 +52,10 @@ CATEGORIES = [
                 "url": "https://www.yna.co.kr/rss/society.xml"
             },
             {
+                "source": "경향신문",
+                "url": "https://www.khan.co.kr/rss/rssdata/society_news.xml"
+            },
+            {
                 "source": "구글뉴스",
                 "url": "https://news.google.com/rss/search?q=%EC%82%AC%ED%92%8C+%EA%B8%B0%EC%82%AC&hl=ko&gl=KR&ceid=KR:ko"
             }
@@ -59,6 +71,10 @@ CATEGORIES = [
                 "url": "https://www.yna.co.kr/rss/culture.xml"
             },
             {
+                "source": "경향신문",
+                "url": "https://www.khan.co.kr/rss/rssdata/culture_news.xml"
+            },
+            {
                 "source": "구글뉴스",
                 "url": "https://news.google.com/rss/search?q=%EB%AC%B8%ED%99%94%EC%98%88%EC%88%A0&hl=ko&gl=KR&ceid=KR:ko"
             }
@@ -72,6 +88,10 @@ CATEGORIES = [
             {
                 "source": "연합뉴스",
                 "url": "https://www.yna.co.kr/rss/international.xml"
+            },
+            {
+                "source": "경향신문",
+                "url": "https://www.khan.co.kr/rss/rssdata/world_news.xml"
             },
             {
                 "source": "구글뉴스",
@@ -104,6 +124,10 @@ CATEGORIES = [
                 "url": "https://www.yna.co.kr/rss/sports.xml"
             },
             {
+                "source": "경향신문",
+                "url": "https://www.khan.co.kr/rss/rssdata/sports_news.xml"
+            },
+            {
                 "source": "구글뉴스",
                 "url": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=ko&gl=KR&ceid=KR:ko"
             }
@@ -117,6 +141,10 @@ CATEGORIES = [
             {
                 "source": "연합뉴스",
                 "url": "https://www.yna.co.kr/rss/industry.xml"
+            },
+            {
+                "source": "경향신문",
+                "url": "https://www.khan.co.kr/rss/rssdata/it_news.xml"
             },
             {
                 "source": "구글뉴스",

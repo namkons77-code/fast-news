@@ -108,6 +108,21 @@ def parse_entry(entry: Any, category_info: Dict[str, Any], default_source: str) 
     # 이미지 URL 추출
     image_url = extract_image_url(entry)
 
+    # 경향신문 등 일부 언론사의 RSS 피드에 이미지가 없을 경우 og:image 자동 보강
+    if not image_url and "khan.co.kr" in link:
+        try:
+            with httpx.Client(timeout=2.0, follow_redirects=True) as client:
+                resp = client.get(link, headers={"User-Agent": "Mozilla/5.0"})
+                if resp.status_code == 200:
+                    soup = BeautifulSoup(resp.text, "html.parser")
+                    og_tag = soup.find("meta", property="og:image") or soup.find("meta", {"name": "og:image"})
+                    if og_tag and og_tag.get("content"):
+                        img_c = og_tag.get("content")
+                        if not any(x in img_c.lower() for x in ["logo", "icon", "khan_logo"]):
+                            image_url = img_c
+        except Exception:
+            pass
+
     # 작성자 파싱
     author = getattr(entry, "author", None)
 

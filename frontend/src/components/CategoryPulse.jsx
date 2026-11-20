@@ -154,7 +154,7 @@ export default function CategoryPulse({ allArticles = [], onSelectNews }) {
               {currentMeta.label} 관련 기사 총 {sectionArticles.length}건 수집됨
             </span>
             <Link
-              to="/frontend"
+              to="/feed"
               className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 transition"
             >
               <span>전체 기사 피드에서 탐색하기</span>

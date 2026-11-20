@@ -62,7 +62,7 @@ export default function Navbar({
                 <span>추천 홈 (Magazine)</span>
               </NavLink>
               <NavLink
-                to="/frontend"
+                to="/feed"
                 className={({ isActive }) =>
                   `flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
                     isActive
@@ -72,7 +72,7 @@ export default function Navbar({
                 }
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
-                <span>전체 피드 (/frontend)</span>
+                <span>전체 피드 (/feed)</span>
               </NavLink>
             </nav>
           </div>
@@ -140,7 +140,7 @@ export default function Navbar({
             <span>추천 홈</span>
           </NavLink>
           <NavLink
-            to="/frontend"
+            to="/feed"
             className={({ isActive }) =>
               `flex items-center gap-1 font-bold py-1 px-3 rounded-lg ${
                 isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600'
@@ -148,7 +148,7 @@ export default function Navbar({
             }
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span>전체 기사 (/frontend)</span>
+            <span>전체 기사 (/feed)</span>
           </NavLink>
         </div>
       </div>

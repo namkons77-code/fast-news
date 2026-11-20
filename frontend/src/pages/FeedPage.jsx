@@ -111,7 +111,7 @@ export default function FeedPage({
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs px-2 py-0.5 rounded-md font-semibold bg-blue-500/30 text-blue-300 border border-blue-400/30">
-                /frontend
+                /feed
               </span>
               <h2 className="text-xl font-bold tracking-tight">
                 전체 기사 피드 & 필터 탐색기

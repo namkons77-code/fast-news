@@ -100,10 +100,10 @@ export default function Home({
                     </h3>
                   </div>
                   <Link
-                    to="/frontend"
+                    to="/feed"
                     className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800 transition"
                   >
-                    <span>전체 피드 (/frontend) 가기</span>
+                    <span>전체 피드 (/feed) 가기</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
@@ -129,11 +129,11 @@ export default function Home({
                       원하는 기사를 카테고리별로 정밀 탐색하세요
                     </h4>
                     <p className="text-xs sm:text-sm text-blue-100 max-w-xl">
-                      정치·경제·문화·사회·국제·지역·스포츠·IT과학 8대 분야와 139개 언론사 필터, 페이지네이션을 /frontend 페이지에서 제공합니다.
+                      정치·경제·문화·사회·국제·지역·스포츠·IT과학 8대 분야와 139개 언론사 필터, 페이지네이션을 /feed 페이지에서 제공합니다.
                     </p>
                   </div>
                   <Link
-                    to="/frontend"
+                    to="/feed"
                     className="shrink-0 px-6 py-3.5 bg-white text-blue-700 hover:bg-blue-50 font-extrabold text-sm rounded-2xl shadow-md hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2"
                   >
                     <span>전체 피드 이동</span>

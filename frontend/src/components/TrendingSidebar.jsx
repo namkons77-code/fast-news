@@ -26,7 +26,7 @@ export default function TrendingSidebar({
     if (onKeywordClick) {
       onKeywordClick(kw);
     } else {
-      navigate(`/frontend?search=${encodeURIComponent(kw)}`);
+      navigate(`/feed?search=${encodeURIComponent(kw)}`);
     }
   };
 
@@ -81,7 +81,7 @@ export default function TrendingSidebar({
 
         <div className="mt-4 pt-3 border-t border-slate-100 text-center">
           <Link
-            to="/frontend"
+            to="/feed"
             className="text-xs font-bold text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
           >
             <span>전체 언론사 필터 보기</span>
