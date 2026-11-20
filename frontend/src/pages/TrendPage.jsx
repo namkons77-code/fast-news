@@ -8,8 +8,14 @@ import {
   MapPin,
   Building2,
   Layers,
-  ChevronRight,
-  Info
+  Database,
+  Landmark,
+  TrendingUp,
+  Users,
+  Palette,
+  Globe,
+  Trophy,
+  Cpu,
 } from 'lucide-react';
 import { fetchTrendKeywords } from '../api/trendApi';
 import WordCloud from '../components/WordCloud';
@@ -17,15 +23,15 @@ import TrendRankingTable from '../components/TrendRankingTable';
 import RelatedNewsDrawer from '../components/RelatedNewsDrawer';
 
 const CATEGORIES = [
-  '전체',
-  '정치',
-  '경제',
-  '사회',
-  '문화',
-  '국제',
-  '지역',
-  '스포츠',
-  'IT과학',
+  { name: '전체', icon: Layers },
+  { name: '정치', icon: Landmark },
+  { name: '경제', icon: TrendingUp },
+  { name: '사회', icon: Users },
+  { name: '문화', icon: Palette },
+  { name: '국제', icon: Globe },
+  { name: '지역', icon: MapPin },
+  { name: '스포츠', icon: Trophy },
+  { name: 'IT과학', icon: Cpu },
 ];
 
 const ENTITY_TYPES = [
@@ -77,10 +83,10 @@ export default function TrendPage({ onSelectNews }) {
       {/* 1. 상단 히어로 & 헤더 */}
       <section className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xs">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-blue-100 text-blue-700 shadow-xs">
                   <Sparkles className="w-3.5 h-3.5" />
                   빅카인즈 공식 빅데이터 분석
                 </span>
@@ -89,41 +95,59 @@ export default function TrendPage({ onSelectNews }) {
                   3시간 자동 갱신
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                 오늘의 키워드 <span className="text-blue-600">워드클라우드</span>
               </h1>
               <p className="text-xs sm:text-sm text-slate-500 mt-1.5 max-w-2xl leading-relaxed">
                 매일 전국 54개 언론사 뉴스에서 빅데이터 AI로 추출한 주요 <strong className="text-slate-700">인물(PS)·기관(OG)·장소(LC)</strong>를 분석하여 3시간 간격(매일 00:30부터 3시간 주기)으로 제공합니다.
               </p>
             </div>
+
+            {/* 우측 분석 대상 뉴스 배지 */}
+            <div className="flex items-center gap-3">
+              <div className="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-medium text-slate-600 flex items-center gap-2 shadow-xs">
+                <Database className="w-4 h-4 text-blue-600" />
+                <span>분석 대상 뉴스:</span>
+                <strong className="text-slate-900 font-extrabold text-sm">
+                  {newsCount.toLocaleString()}
+                </strong>
+                <span>건</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 2. 컨트롤 패널 (카테고리 탭 & 개체명 필터 & 뷰 모드) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4">
-        {/* 카테고리 탭 */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
-          {CATEGORIES.map((cat) => {
-            const isActive = selectedCategory === cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                  isActive
-                    ? 'bg-blue-600 text-white shadow-xs scale-102'
-                    : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'
-                }`}
-              >
-                {cat}
-              </button>
-            );
-          })}
+      {/* 2. 카테고리 탭 네비게이션 (FeedPage와 동일한 규격 및 디자인 적용) */}
+      <nav className="w-full bg-white border-b border-slate-200 overflow-x-auto no-scrollbar shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-1 sm:space-x-2 py-2.5">
+            {CATEGORIES.map((cat) => {
+              const isSelected = selectedCategory === cat.name;
+              const Icon = cat.icon;
+              return (
+                <button
+                  key={cat.name}
+                  onClick={() => setSelectedCategory(cat.name)}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 ${
+                    isSelected
+                      ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/25 ring-2 ring-blue-600/20'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${isSelected ? 'text-white' : 'text-slate-400'}`} />
+                  <span>{cat.name}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
+      </nav>
 
-        {/* 하단 서브 컨트롤 바 (개체명 필터 + 보기 모드 토글 + 범례) */}
-        <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs">
+      {/* 3. 컨트롤 패널 (개체명 필터 & 뷰 모드) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4">
+        {/* 서브 컨트롤 바 (개체명 필터 + 보기 모드 토글 + 범례) */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs">
           {/* 개체명 타입 필터 (전체, 인물, 장소, 기관) */}
           <div className="flex items-center gap-1.5 overflow-x-auto">
             <span className="text-xs font-bold text-slate-400 mr-1 hidden sm:inline">유형:</span>

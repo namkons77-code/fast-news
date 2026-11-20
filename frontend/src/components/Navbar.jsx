@@ -28,7 +28,7 @@ export default function Navbar() {
               </div>
             </Link>
 
-            {/* 네비게이션 탭 (메인 추천 포털 vs 전체 피드) */}
+            {/* 네비게이션 탭 (매거진 홈 / 전체 피드 / 오늘의 키워드) */}
             <nav className="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
               <NavLink
                 to="/"
@@ -42,7 +42,7 @@ export default function Navbar() {
                 }
               >
                 <Flame className="w-3.5 h-3.5" />
-                <span>추천 홈 (Magazine)</span>
+                <span>매거진 홈</span>
               </NavLink>
               <NavLink
                 to="/feed"
@@ -55,7 +55,7 @@ export default function Navbar() {
                 }
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
-                <span>전체 피드 (/feed)</span>
+                <span>전체 피드</span>
               </NavLink>
               <NavLink
                 to="/trend"
@@ -68,33 +68,33 @@ export default function Navbar() {
                 }
               >
                 <Sparkles className="w-3.5 h-3.5 text-blue-500" />
-                <span>오늘의 키워드 (/trend)</span>
+                <span>오늘의 키워드</span>
               </NavLink>
             </nav>
           </div>
 
-          {/* 우측 툴바 제거됨 (사용자 요청) */}
+          {/* 우측 빈 영역 (깔끔한 헤더 여백 유지) */}
         </div>
 
         {/* 모바일용 서브 탭 */}
-        <div className="flex md:hidden items-center justify-around py-2 border-t border-slate-100 text-xs">
+        <div className="flex md:hidden items-center justify-around py-2 border-t border-slate-100 text-xs bg-slate-50/70">
           <NavLink
             to="/"
             end
             className={({ isActive }) =>
-              `flex items-center gap-1 font-bold py-1 px-3 rounded-lg ${
-                isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600'
+              `flex items-center gap-1 font-bold py-1 px-3 rounded-lg transition ${
+                isActive ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600'
               }`
             }
           >
             <Flame className="w-3.5 h-3.5" />
-            <span>추천 홈</span>
+            <span>매거진 홈</span>
           </NavLink>
           <NavLink
             to="/feed"
             className={({ isActive }) =>
-              `flex items-center gap-1 font-bold py-1 px-3 rounded-lg ${
-                isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600'
+              `flex items-center gap-1 font-bold py-1 px-3 rounded-lg transition ${
+                isActive ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600'
               }`
             }
           >
@@ -104,13 +104,13 @@ export default function Navbar() {
           <NavLink
             to="/trend"
             className={({ isActive }) =>
-              `flex items-center gap-1 font-bold py-1 px-3 rounded-lg ${
-                isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600'
+              `flex items-center gap-1 font-bold py-1 px-3 rounded-lg transition ${
+                isActive ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600'
               }`
             }
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>키워드 트렌드</span>
+            <span>오늘의 키워드</span>
           </NavLink>
         </div>
       </div>

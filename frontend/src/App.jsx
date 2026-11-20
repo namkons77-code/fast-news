@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import BreakingTicker from './components/BreakingTicker';
 import Home from './pages/Home';
 import FeedPage from './pages/FeedPage';
 import TrendPage from './pages/TrendPage';
 import NewsModal from './components/NewsModal';
 import CrawlStatusModal from './components/CrawlStatusModal';
 import BookmarksModal from './components/BookmarksModal';
-import { fetchCrawlStatus, triggerManualCrawl } from './api/newsApi';
+import { fetchCrawlStatus, triggerManualCrawl, fetchNews } from './api/newsApi';
 import { getBookmarks, toggleBookmark } from './utils/bookmarkStorage';
 import { Sparkles, CheckCircle2, AlertTriangle } from 'lucide-react';
 
@@ -20,6 +21,9 @@ export default function App() {
   const [crawlStatus, setCrawlStatus] = useState(null);
   const [isCrawling, setIsCrawling] = useState(false);
   const [toast, setToast] = useState(null);
+
+  // 실시간 속보 롤링 바 (전체 페이지 공유)
+  const [tickerNews, setTickerNews] = useState([]);
 
   // 북마크(스크랩) 상태
   const [bookmarks, setBookmarks] = useState([]);
@@ -51,6 +55,13 @@ export default function App() {
   useEffect(() => {
     loadCrawlStatus();
     reloadBookmarks();
+
+    // 상단 속보 티커 데이터 로드
+    fetchNews({ page: 1, limit: 10 })
+      .then((res) => {
+        if (res && res.data) setTickerNews(res.data);
+      })
+      .catch((err) => console.error('속보 티커 로드 실패:', err));
   }, [loadCrawlStatus, reloadBookmarks]);
 
   // 북마크 토글 핸들러
@@ -114,7 +125,7 @@ export default function App() {
           </div>
         )}
 
-        {/* 상단 네비게이션 헤더 (홈 '/' vs 전체피드 '/feed' 탭) */}
+        {/* 상단 네비게이션 헤더 */}
         <Navbar
           crawlStatus={crawlStatus}
           onTriggerCrawl={handleTriggerCrawl}
@@ -122,6 +133,12 @@ export default function App() {
           onOpenStatusModal={() => setShowStatusModal(true)}
           onOpenBookmarks={() => setShowBookmarksModal(true)}
           bookmarkCount={bookmarks.length}
+        />
+
+        {/* 전 페이지 공통 실시간 속보 롤링 바 */}
+        <BreakingTicker
+          articles={tickerNews}
+          onSelectNews={(n) => setSelectedNews(n)}
         />
 
         {/* 메인 라우트 분기 */}
@@ -170,18 +187,20 @@ export default function App() {
         {/* 푸터 */}
         <footer className="bg-white border-t border-slate-200 py-10 text-xs text-slate-400 text-center mt-12">
           <div className="max-w-7xl mx-auto px-4 space-y-3">
-            <div className="flex items-center justify-center gap-4 text-slate-600 font-semibold text-xs">
-              <a href="/" className="hover:text-blue-600">추천 홈 (Magazine)</a>
+            <div className="flex items-center justify-center gap-4 text-slate-600 font-bold text-xs">
+              <Link to="/" className="hover:text-blue-600 transition">매거진 홈</Link>
               <span>·</span>
-              <a href="/feed" className="hover:text-blue-600">전체 기사 피드 (/feed)</a>
+              <Link to="/feed" className="hover:text-blue-600 transition">전체 피드</Link>
               <span>·</span>
-              <a href="/trend" className="hover:text-blue-600">오늘의 키워드 (/trend)</a>
+              <Link to="/trend" className="hover:text-blue-600 transition">오늘의 키워드</Link>
               <span>·</span>
-              <button onClick={() => setShowBookmarksModal(true)} className="hover:text-blue-600">
+              <button onClick={() => setShowBookmarksModal(true)} className="hover:text-blue-600 transition">
                 내 스크랩 ({bookmarks.length})
               </button>
               <span>·</span>
-              <button onClick={() => setShowStatusModal(true)} className="hover:text-blue-600">스케줄러 상태</button>
+              <button onClick={() => setShowStatusModal(true)} className="hover:text-blue-600 transition">
+                스케줄러 상태
+              </button>
             </div>
             <p className="font-semibold text-slate-500">
               FastNews — 빅카인즈(BigKinds) 54개 언론사 & 카테고리별 RSS 실시간 크롤링 플랫폼

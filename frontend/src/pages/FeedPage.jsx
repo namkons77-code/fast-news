@@ -4,7 +4,7 @@ import SearchBar from '../components/SearchBar';
 import NewsCard from '../components/NewsCard';
 import Pagination from '../components/Pagination';
 import { fetchNews, fetchCategories, fetchSources } from '../api/newsApi';
-import { Newspaper, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Newspaper, AlertTriangle, RefreshCw, LayoutGrid, Database } from 'lucide-react';
 
 export default function FeedPage({
   onSelectNews,
@@ -104,32 +104,46 @@ export default function FeedPage({
       : selectedCategory;
 
   return (
-    <div>
-      {/* 서브 헤더 배너 */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white py-6 border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs px-2 py-0.5 rounded-md font-semibold bg-blue-500/30 text-blue-300 border border-blue-400/30">
-                /feed
-              </span>
-              <h2 className="text-xl font-bold tracking-tight">
-                전체 기사 피드 & 필터 탐색기
-              </h2>
+    <div className="min-h-screen bg-slate-50/50 pb-16">
+      {/* 1. 상단 통일 헤더 섹션 */}
+      <section className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-blue-100 text-blue-700 shadow-xs">
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  실시간 전체 뉴스 피드
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  15분 자동 수집
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                전체 뉴스 <span className="text-blue-600">피드 탐색</span>
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1.5 max-w-2xl leading-relaxed">
+                정치·경제·사회·문화·국제·지역·스포츠·IT과학 8대 분야와 180여 개 언론사의 실시간 뉴스를 키워드 검색, 언론사 필터, 페이지네이션으로 정밀하게 탐색하세요.
+              </p>
             </div>
-            <p className="text-xs text-slate-300">
-              8대 카테고리(정치·경제·사회·문화·국제·지역·스포츠·IT과학)와 139개 언론사 기사를 정밀 검색하고 탐색하세요.
-            </p>
-          </div>
-          <div className="flex items-center gap-3 text-xs">
-            <div className="bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
-              총 기사 수: <strong className="text-blue-400 font-bold">{crawlStatus?.total_news_count?.toLocaleString()}</strong>건
+
+            {/* 우측 총 기사 수 배지 */}
+            <div className="flex items-center gap-3">
+              <div className="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-medium text-slate-600 flex items-center gap-2 shadow-xs">
+                <Database className="w-4 h-4 text-blue-600" />
+                <span>총 기사 수:</span>
+                <strong className="text-slate-900 font-extrabold text-sm">
+                  {crawlStatus?.total_news_count?.toLocaleString() || 0}
+                </strong>
+                <span>건</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* 카테고리 탭 네비게이션 */}
+      {/* 2. 카테고리 탭 네비게이션 */}
       <CategoryNav
         categories={categories}
         selectedCategory={selectedCategory}
