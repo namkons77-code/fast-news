@@ -14,11 +14,11 @@ export default function BookmarksModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-3xl max-w-xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-slate-200 relative p-6 flex flex-col"
+        className="bg-white rounded-3xl max-w-xl w-full max-h-[85vh] overflow-hidden shadow-2xl border border-slate-200 relative flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div className="shrink-0 p-6 pb-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
               <Bookmark className="w-4 h-4 fill-amber-500" />
@@ -41,7 +41,7 @@ export default function BookmarksModal({
         </div>
 
         {/* 기사 목록 */}
-        <div className="py-4 space-y-3 flex-1 overflow-y-auto">
+        <div className="p-6 pt-4 space-y-3 flex-1 overflow-y-auto custom-scrollbar">
           {bookmarks.length === 0 ? (
             <div className="py-16 text-center text-slate-400">
               <Bookmark className="w-12 h-12 mx-auto mb-2 opacity-30" />

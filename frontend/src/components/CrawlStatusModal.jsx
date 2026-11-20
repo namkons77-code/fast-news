@@ -18,11 +18,11 @@ export default function CrawlStatusModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 relative p-6 sm:p-7"
+        className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-slate-200 relative flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div className="shrink-0 p-6 sm:p-7 pb-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
               <Server className="w-4 h-4" />
@@ -45,7 +45,7 @@ export default function CrawlStatusModal({
         </div>
 
         {/* 정보 카드 그리드 */}
-        <div className="mt-5 space-y-4">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-7 space-y-4">
           {/* 1. 스케줄러 상태 */}
           <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
             <div className="flex items-center justify-between mb-2">
@@ -153,7 +153,7 @@ export default function CrawlStatusModal({
         </div>
 
         {/* 하단 수동 크롤링 실행 버튼 */}
-        <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+        <div className="shrink-0 p-6 sm:p-7 pt-4 border-t border-slate-100 flex items-center justify-between">
           <span className="text-[11px] text-slate-400">
             주기적인 15분 자동 수집 외에도 언제든 즉시 수집할 수 있습니다.
           </span>

@@ -36,11 +36,11 @@ export default function NewsModal({ news, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 relative flex flex-col"
+        className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-slate-200 relative flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 닫기 버튼 */}
-        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-100 px-6 sm:px-8 py-4 flex items-center justify-between">
+        <div className="shrink-0 bg-white border-b border-slate-100 px-6 sm:px-8 py-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
             <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${theme.badge}`}>
               {news.category}
@@ -104,8 +104,8 @@ export default function NewsModal({ news, onClose }) {
           </div>
         </div>
 
-        {/* 본문 내용 */}
-        <div className="p-6 sm:p-10 lg:p-12 space-y-7">
+        {/* 본문 내용: 본문 영역만 스크롤 (라운드 코너 밖으로 나가지 않음) */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-10 lg:p-12 space-y-7">
           <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold text-slate-900 leading-[1.35] tracking-tight break-keep">
             {news.title}
           </h2>
@@ -160,7 +160,7 @@ export default function NewsModal({ news, onClose }) {
         </div>
 
         {/* 하단 액션 버튼 */}
-        <div className="sticky bottom-0 bg-slate-50 border-t border-slate-200/80 px-6 sm:px-8 py-4 flex items-center justify-between">
+        <div className="shrink-0 bg-slate-50 border-t border-slate-200/80 px-6 sm:px-8 py-4 flex items-center justify-between z-10">
           <span className="text-xs text-slate-400">
             저작권은 해당 언론사({news.source})에 있습니다.
           </span>
