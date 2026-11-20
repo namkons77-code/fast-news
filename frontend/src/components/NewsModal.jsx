@@ -4,6 +4,7 @@ import { getCategoryTheme } from '../utils/formatters';
 
 export default function NewsModal({ news, onClose }) {
   const [copied, setCopied] = React.useState(false);
+  const [fontSize, setFontSize] = React.useState('lg'); // 'md', 'lg', 'xl'
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -22,6 +23,12 @@ export default function NewsModal({ news, onClose }) {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const contentFontSizeClass = {
+    md: 'text-base leading-relaxed',
+    lg: 'text-lg leading-[1.8]',
+    xl: 'text-xl leading-[1.85]',
+  }[fontSize];
 
   return (
     <div
@@ -43,6 +50,31 @@ export default function NewsModal({ news, onClose }) {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            {/* 글자 크기 조절 바 */}
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600 mr-1">
+              <button
+                onClick={() => setFontSize('md')}
+                className={`px-2 py-0.5 rounded-lg transition ${fontSize === 'md' ? 'bg-white text-blue-600 shadow-xs' : 'hover:text-slate-900'}`}
+                title="글자 크기 보통"
+              >
+                가
+              </button>
+              <button
+                onClick={() => setFontSize('lg')}
+                className={`px-2 py-0.5 rounded-lg transition text-sm ${fontSize === 'lg' ? 'bg-white text-blue-600 shadow-xs' : 'hover:text-slate-900'}`}
+                title="글자 크기 크게 (권장)"
+              >
+                가+
+              </button>
+              <button
+                onClick={() => setFontSize('xl')}
+                className={`px-2 py-0.5 rounded-lg transition text-base ${fontSize === 'xl' ? 'bg-white text-blue-600 shadow-xs' : 'hover:text-slate-900'}`}
+                title="글자 크기 아주 크게"
+              >
+                가++
+              </button>
+            </div>
+
             <button
               onClick={handleShare}
               className="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition"
@@ -61,27 +93,27 @@ export default function NewsModal({ news, onClose }) {
         </div>
 
         {/* 본문 내용 */}
-        <div className="p-6 sm:p-8 space-y-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
+        <div className="p-6 sm:p-9 space-y-6">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-[1.35] tracking-tight break-keep">
             {news.title}
           </h2>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pb-4 border-b border-slate-100">
-            <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-500 pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-1.5 font-medium">
               <Calendar className="w-4 h-4 text-slate-400" />
               <span>발행: {new Date(news.published_at).toLocaleString('ko-KR')}</span>
             </div>
             {news.author && (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 font-medium">
                 <User className="w-4 h-4 text-slate-400" />
-                <span>기자/작성자: {news.author}</span>
+                <span>기자: {news.author}</span>
               </div>
             )}
           </div>
 
           {/* 대표 이미지 */}
           {news.image_url && (
-            <div className="rounded-2xl overflow-hidden bg-slate-100 max-h-96">
+            <div className="rounded-2xl overflow-hidden bg-slate-100 max-h-[460px] shadow-xs">
               <img
                 src={news.image_url}
                 alt={news.title}
@@ -92,17 +124,21 @@ export default function NewsModal({ news, onClose }) {
           )}
 
           {/* 요약 및 본문 */}
-          <div className="space-y-4 text-slate-700 leading-relaxed text-sm sm:text-base">
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/60 text-slate-800 font-medium">
-              <div className="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1">
-                기사 요약
+          <div className="space-y-5 text-slate-800 break-keep">
+            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 text-slate-800">
+              <div className="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1.5">
+                핵심 기사 요약
               </div>
-              <p>{news.summary || '요약 정보가 없습니다.'}</p>
+              <p className="text-[15px] sm:text-base leading-relaxed font-medium text-slate-700">
+                {news.summary || '요약 정보가 없습니다.'}
+              </p>
             </div>
 
             {news.content && news.content !== news.summary && (
-              <div className="prose prose-slate max-w-none pt-2">
-                <p className="whitespace-pre-line">{news.content}</p>
+              <div className="pt-2 text-slate-800">
+                <p className={`${contentFontSizeClass} whitespace-pre-line text-slate-800 font-normal`}>
+                  {news.content}
+                </p>
               </div>
             )}
           </div>

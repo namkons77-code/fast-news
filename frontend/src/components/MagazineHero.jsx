@@ -102,22 +102,22 @@ export default function MagazineHero({
           </div>
 
           {/* 메인 텍스트 정보 */}
-          <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between">
+          <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between">
             <div>
-              <h3 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-blue-600 transition-colors leading-tight mb-3">
+              <h3 className="text-xl sm:text-2xl lg:text-[26px] font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors leading-[1.35] tracking-tight break-keep mb-3">
                 {topArticle.title}
               </h3>
-              <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed">
+              <p className="text-sm sm:text-[15px] text-slate-600 line-clamp-3 leading-relaxed break-keep font-normal">
                 {topArticle.summary || topArticle.content}
               </p>
             </div>
 
-            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-xs text-blue-600 font-bold group-hover:underline flex items-center gap-1">
+            <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-xs font-bold text-blue-600 group-hover:underline flex items-center gap-1">
                 기사 전문 읽기 <ArrowUpRight className="w-4 h-4" />
               </span>
               {topArticle.author && (
-                <span className="text-xs text-slate-400">기자: {topArticle.author}</span>
+                <span className="text-xs text-slate-400 font-medium">기자: {topArticle.author}</span>
               )}
             </div>
           </div>
@@ -155,12 +155,12 @@ export default function MagazineHero({
                           {art.source}
                         </span>
                       </div>
-                      <h4 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                      <h4 className="text-[15px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-[1.4] break-keep">
                         {art.title}
                       </h4>
                     </div>
-                    <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-2">
-                      <Clock className="w-3 h-3" />
+                    <div className="text-xs text-slate-500 font-medium flex items-center gap-1 mt-2">
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
                       <span>{formatTimeAgo(art.published_at)}</span>
                     </div>
                   </div>
@@ -200,11 +200,11 @@ export default function MagazineHero({
                     {idx + 1}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-slate-800 group-hover:text-blue-600 truncate leading-snug">
+                    <p className="text-[13px] font-bold text-slate-800 group-hover:text-blue-600 truncate leading-snug break-keep">
                       {item.title}
                     </p>
-                    <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
-                      <span className="font-medium text-slate-500">{item.source}</span>
+                    <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-0.5">
+                      <span className="font-semibold text-slate-700">{item.source}</span>
                       <span>·</span>
                       <span>{item.category}</span>
                     </div>

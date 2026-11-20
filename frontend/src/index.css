@@ -1,10 +1,37 @@
 @import "tailwindcss";
 
 @layer base {
-  body {
-    @apply bg-slate-50 text-slate-800 antialiased selection:bg-blue-500 selection:text-white;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  html {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
+
+  body {
+    @apply bg-slate-50 text-slate-800 selection:bg-blue-600 selection:text-white;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    letter-spacing: -0.02em;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    word-break: keep-all;
+    letter-spacing: -0.03em;
+    line-height: 1.35;
+  }
+
+  p {
+    word-break: keep-all;
+    line-height: 1.65;
+  }
+}
+
+/* 한국어 단어 줄바꿈 유지 */
+.break-keep {
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 /* 커스텀 스크롤바 */
@@ -23,7 +50,7 @@
   background: #94a3b8;
 }
 
-/* 라인 클램프 유틸리티 보장 */
+/* 라인 클램프 유틸리티 */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -33,6 +60,12 @@
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

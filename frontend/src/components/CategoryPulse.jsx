@@ -96,10 +96,10 @@ export default function CategoryPulse({ allArticles = [], onSelectNews }) {
                 <span>{formatTimeAgo(leadArticle.published_at)}</span>
               </div>
 
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug mb-2 line-clamp-2">
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-[1.4] break-keep mb-2 line-clamp-2">
                 {leadArticle.title}
               </h3>
-              <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+              <p className="text-[13.5px] sm:text-sm text-slate-600 line-clamp-3 leading-relaxed break-keep font-normal">
                 {leadArticle.summary}
               </p>
             </div>
@@ -125,12 +125,12 @@ export default function CategoryPulse({ allArticles = [], onSelectNews }) {
                 className="group py-3.5 first:pt-0 last:pb-0 flex items-start justify-between gap-4 cursor-pointer"
               >
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1 text-[11px] text-slate-400">
-                    <span className="font-semibold text-slate-600">{art.source}</span>
+                  <div className="flex items-center gap-2 mb-1.5 text-xs text-slate-500">
+                    <span className="font-bold text-slate-700">{art.source}</span>
                     <span>·</span>
                     <span>{formatTimeAgo(art.published_at)}</span>
                   </div>
-                  <h4 className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                  <h4 className="text-[14.5px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug break-keep">
                     {art.title}
                   </h4>
                 </div>
