@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import BreakingTicker from '../components/BreakingTicker';
 import MagazineHero from '../components/MagazineHero';
-import TrendingSidebar from '../components/TrendingSidebar';
 import NewsCard from '../components/NewsCard';
 import { fetchNews, fetchSources } from '../api/newsApi';
-import { ArrowRight, Sparkles, RefreshCw, Layers } from 'lucide-react';
+import { ArrowRight, RefreshCw, Layers } from 'lucide-react';
 
 export default function Home({
   onSelectNews,
@@ -55,10 +54,10 @@ export default function Home({
     ...trendingList.map((a) => a.id),
   ]);
 
-  // 실시간 종합 최신 기사 6선 (하단 그리드용)
+  // 실시간 종합 최신 기사 (전체 너비 3열 그리드용 9건)
   const latestGrid = recentArticles
     .filter((a) => !heroAndTrendingIds.has(a.id))
-    .slice(0, 6);
+    .slice(0, 9);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -88,66 +87,55 @@ export default function Home({
               bookmarkedIds={bookmarkedIds}
             />
 
-            {/* 4. 2단 레이아웃: 좌측 실시간 최신 6선 카드 + 우측 트렌딩 사이드바 */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* 좌측 (8칸): 최신 기사 카드 그리드 */}
-              <div className="lg:col-span-8">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-5 bg-blue-600 rounded-full inline-block"></span>
-                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                      방금 올라온 최신 기사
-                    </h3>
-                  </div>
-                  <Link
-                    to="/feed"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800 transition"
-                  >
-                    <span>전체 피드 (/feed) 가기</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+            {/* 4. 실시간 최신 기사 그리드 (전체 너비 3열) */}
+            <div className="mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-1.5 h-6 bg-blue-600 rounded-full inline-block"></span>
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    방금 올라온 최신 기사
+                  </h3>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-                  {latestGrid.map((news) => (
-                    <NewsCard
-                      key={news.id}
-                      news={news}
-                      onClick={onSelectNews}
-                    />
-                  ))}
-                </div>
-
-                {/* 대형 전체 기사 피드 바로가기 배너 */}
-                <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-700 text-white rounded-3xl p-7 sm:p-9 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6">
-                  <div>
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md mb-2">
-                      <Layers className="w-3.5 h-3.5" />
-                      <span>카테고리 & 언론사 상세 필터</span>
-                    </div>
-                    <h4 className="text-xl sm:text-2xl font-black tracking-tight mb-2">
-                      원하는 기사를 카테고리별로 정밀 탐색하세요
-                    </h4>
-                    <p className="text-xs sm:text-sm text-blue-100 max-w-xl">
-                      정치·경제·문화·사회·국제·지역·스포츠·IT과학 8대 분야와 139개 언론사 필터, 페이지네이션을 /feed 페이지에서 제공합니다.
-                    </p>
-                  </div>
-                  <Link
-                    to="/feed"
-                    className="shrink-0 px-6 py-3.5 bg-white text-blue-700 hover:bg-blue-50 font-extrabold text-sm rounded-2xl shadow-md hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2"
-                  >
-                    <span>전체 피드 이동</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
+                <Link
+                  to="/feed"
+                  className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-blue-600 hover:text-blue-800 transition"
+                >
+                  <span>전체 피드 (/feed) 가기</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
 
-              {/* 우측 (4칸): 트렌딩 사이드바 */}
-              <div className="lg:col-span-4">
-                <TrendingSidebar
-                  sourcesList={sourcesList}
-                  crawlStatus={crawlStatus}
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+                {latestGrid.map((news) => (
+                  <NewsCard
+                    key={news.id}
+                    news={news}
+                    onClick={onSelectNews}
+                  />
+                ))}
+              </div>
+
+              {/* 대형 전체 기사 피드 바로가기 배너 */}
+              <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-700 text-white rounded-3xl p-7 sm:p-9 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md mb-2">
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>카테고리 & 언론사 상세 필터</span>
+                  </div>
+                  <h4 className="text-xl sm:text-2xl font-black tracking-tight mb-2">
+                    원하는 기사를 카테고리별로 정밀 탐색하세요
+                  </h4>
+                  <p className="text-xs sm:text-sm text-blue-100 max-w-xl">
+                    정치·경제·문화·사회·국제·지역·스포츠·IT과학 8대 분야와 139개 언론사 필터, 페이지네이션을 /feed 페이지에서 제공합니다.
+                  </p>
+                </div>
+                <Link
+                  to="/feed"
+                  className="shrink-0 px-6 py-3.5 bg-white text-blue-700 hover:bg-blue-50 font-extrabold text-sm rounded-2xl shadow-md hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2"
+                >
+                  <span>전체 피드 이동</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </div>
           </>
