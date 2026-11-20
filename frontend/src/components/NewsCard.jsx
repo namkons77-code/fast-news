@@ -1,9 +1,9 @@
-import React, { useState, memo } from 'react';
+import React, { memo } from 'react';
 import { ExternalLink, Clock, Newspaper, ArrowUpRight } from 'lucide-react';
 import { formatTimeAgo, getCategoryTheme } from '../utils/formatters';
+import NewsImage from './NewsImage';
 
 function NewsCard({ news, onClick }) {
-  const [imgError, setImgError] = useState(false);
   const theme = getCategoryTheme(news.category_code);
 
   return (
@@ -13,26 +13,14 @@ function NewsCard({ news, onClick }) {
     >
       {/* 썸네일 영역 */}
       <div className="relative aspect-16/9 bg-slate-100 overflow-hidden">
-        {news.image_url && !imgError ? (
-          <img
-            src={news.image_url}
-            alt={news.title}
-            onError={() => setImgError(true)}
-            loading="lazy"
-            decoding="async"
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div
-            className={`w-full h-full bg-gradient-to-br ${theme.gradient} opacity-90 flex flex-col items-center justify-center p-6 text-white`}
-          >
-            <Newspaper className="w-10 h-10 opacity-70 mb-2" />
-            <span className="text-xs font-semibold tracking-wide uppercase opacity-90">
-              {news.category} 뉴스
-            </span>
-          </div>
-        )}
+        <NewsImage
+          src={news.image_url}
+          alt={news.title}
+          categoryCode={news.category_code}
+          categoryName={news.category}
+          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+          fallbackType="card"
+        />
 
         {/* 카테고리 뱃지 */}
         <div className="absolute top-3 left-3 flex items-center gap-1.5">

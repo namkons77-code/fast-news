@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { X, ExternalLink, Calendar, User, Newspaper, Share2, Check } from 'lucide-react';
 import { getCategoryTheme } from '../utils/formatters';
+import NewsImage from './NewsImage';
 
 export default function NewsModal({ news, onClose }) {
   const [copied, setCopied] = React.useState(false);
@@ -126,11 +127,13 @@ export default function NewsModal({ news, onClose }) {
           {/* 대표 이미지 */}
           {news.image_url && (
             <div className="rounded-2xl overflow-hidden bg-slate-100 max-h-[500px] shadow-xs">
-              <img
+              <NewsImage
                 src={news.image_url}
                 alt={news.title}
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover"
+                categoryCode={news.category_code}
+                categoryName={news.category}
+                className="w-full h-full object-cover object-top"
+                fallbackType="modal"
               />
             </div>
           )}

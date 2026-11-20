@@ -76,22 +76,49 @@ def parse_date(date_str: Optional[str]) -> datetime:
 
 
 def parse_image_url(images_field: Optional[str]) -> Optional[str]:
-    """빅카인즈 IMAGES 필드에서 첫 번째 이미지 URL 추출 (.jpg 확장자 보정)"""
+    """빅카인즈 IMAGES 필드에서 첫 번째 이미지 URL 추출 (.jpg 확장자 기본 보정)"""
     if not images_field:
         return None
-    # 쉼표 또는 공백으로 분리
     urls = [u.strip() for u in str(images_field).split(",") if u.strip()]
     if urls:
         first_url = urls[0]
         if not first_url.startswith("http") and first_url.startswith("/"):
             first_url = f"https://www.bigkinds.or.kr{first_url}"
 
-        # 빅카인즈 이미지 URL은 .01 등 번호로 끝나는 경우가 많으므로 .jpg 확장자 보정
         if "bigkinds.or.kr" in first_url and not any(first_url.lower().endswith(ext) for ext in [".jpg", ".jpeg", ".png", ".gif", ".webp"]):
             first_url = f"{first_url}.jpg"
 
         return first_url
     return None
+
+
+async def resolve_bigkinds_image(client: httpx.AsyncClient, images_field: Optional[str]) -> Optional[str]:
+    """빅카인즈 IMAGES 필드에서 유효한 이미지 URL 및 올바른 확장자(.jpg, .png, .jpeg) 비동기 감지"""
+    if not images_field:
+        return None
+    urls = [u.strip() for u in str(images_field).split(",") if u.strip()]
+    if not urls:
+        return None
+
+    first_url = urls[0]
+    if not first_url.startswith("http") and first_url.startswith("/"):
+        first_url = f"https://www.bigkinds.or.kr{first_url}"
+
+    # 이미 확장자가 있는 경우
+    if any(first_url.lower().endswith(ext) for ext in [".jpg", ".jpeg", ".png", ".gif", ".webp"]):
+        return first_url
+
+    # .01 등 확장자 미포함된 경우 실제 지원되는 확장자 순차 감지 (.jpg -> .png -> .jpeg)
+    for ext in [".jpg", ".png", ".jpeg"]:
+        candidate = f"{first_url}{ext}"
+        try:
+            r = await client.head(candidate, timeout=1.0)
+            if r.status_code == 200:
+                return candidate
+        except Exception:
+            pass
+
+    return f"{first_url}.jpg"
 
 
 async def fetch_category_from_bigkinds(
@@ -134,7 +161,11 @@ async def fetch_category_from_bigkinds(
         raw_list = data.get("resultList", [])
         items = []
 
-        for row in raw_list:
+        # 이미지 유효 확장자 병렬 감지
+        image_tasks = [resolve_bigkinds_image(client, row.get("IMAGES")) for row in raw_list]
+        resolved_images = await asyncio.gather(*image_tasks, return_exceptions=True)
+
+        for idx, row in enumerate(raw_list):
             news_id = row.get("NEWS_ID", "").strip()
             title = clean_text(row.get("TITLE", ""))
             if not news_id or not title:
@@ -149,7 +180,9 @@ async def fetch_category_from_bigkinds(
             summary = clean_text(row.get("CONTENT", ""))
             provider = row.get("PROVIDER", "빅카인즈").strip()
             author = row.get("BYLINE", "").strip() or None
-            image_url = parse_image_url(row.get("IMAGES"))
+            
+            img_res = resolved_images[idx]
+            image_url = img_res if isinstance(img_res, str) else parse_image_url(row.get("IMAGES"))
             published_at = parse_bigkinds_timestamp(news_id, row.get("DATE"))
 
             items.append({

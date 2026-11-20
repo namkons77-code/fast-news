@@ -68,7 +68,7 @@ export default function CategoryNav({
                         : 'bg-slate-100 text-slate-500'
                     }`}
                   >
-                    {cat.count}
+                    {typeof cat.count === 'number' ? cat.count.toLocaleString() : cat.count}
                   </span>
                 )}
               </button>

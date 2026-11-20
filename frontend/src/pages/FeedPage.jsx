@@ -148,7 +148,7 @@ export default function FeedPage({
         categories={categories}
         selectedCategory={selectedCategory}
         onSelectCategory={handleSelectCategory}
-        totalCount={crawlStatus?.total_news_count || 0}
+        totalCount={crawlStatus?.total_news_count || categories.reduce((sum, c) => sum + (c.count || 0), 0)}
       />
 
       {/* 메인 콘텐츠 영역 */}

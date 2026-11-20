@@ -1,5 +1,8 @@
 import os
+import time
+import asyncio
 import sqlite3
+from collections import Counter
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional, Tuple
 from app.config import settings
@@ -105,6 +108,10 @@ def init_sqlite_db():
 init_sqlite_db()
 
 
+_CATEGORY_COUNTS_CACHE = {"data": None, "timestamp": 0.0}
+_SOURCES_CACHE = {"data": None, "timestamp": 0.0}
+
+
 def get_db_mode() -> str:
     return "supabase" if USE_SUPABASE else "sqlite (WAL optimized)"
 
@@ -133,6 +140,8 @@ async def save_news_batch(articles: List[Dict[str, Any]]) -> Tuple[int, int]:
                 ).execute()
                 if res.data:
                     inserted_count += len(res.data)
+            _CATEGORY_COUNTS_CACHE["timestamp"] = 0.0
+            _SOURCES_CACHE["timestamp"] = 0.0
             return len(articles), inserted_count
         except Exception as e:
             print(f"[Supabase Save Error] {e}. Saving to SQLite fallback...")
@@ -182,6 +191,8 @@ async def save_news_batch(articles: List[Dict[str, Any]]) -> Tuple[int, int]:
         inserted_count = cursor.rowcount
         conn.commit()
 
+    _CATEGORY_COUNTS_CACHE["timestamp"] = 0.0
+    _SOURCES_CACHE["timestamp"] = 0.0
     return len(articles), inserted_count
 
 
@@ -319,11 +330,40 @@ async def get_news_detail(news_id: int) -> Optional[Dict[str, Any]]:
 
 
 async def get_category_counts() -> Dict[str, int]:
-    """카테고리별 뉴스 개수 집계 (GROUP BY 인덱스 활용)"""
+    """카테고리별 뉴스 개수 집계 (Supabase 병렬 카운트 및 30초 인메모리 캐시 지원)"""
+    global _CATEGORY_COUNTS_CACHE
+    now = time.time()
+
+    if _CATEGORY_COUNTS_CACHE["data"] and (now - _CATEGORY_COUNTS_CACHE["timestamp"] < 30.0):
+        return _CATEGORY_COUNTS_CACHE["data"]
+
+    if USE_SUPABASE and supabase_client:
+        try:
+            from app.crawler.feeds import CATEGORIES
+
+            async def fetch_cat_count(cat_code: str):
+                res = await asyncio.to_thread(
+                    lambda: supabase_client.table("news")
+                    .select("id", count="exact")
+                    .eq("category_code", cat_code)
+                    .limit(1)
+                    .execute()
+                )
+                return cat_code, res.count or 0
+
+            results = await asyncio.gather(*(fetch_cat_count(c["code"]) for c in CATEGORIES))
+            counts = {code: cnt for code, cnt in results}
+            _CATEGORY_COUNTS_CACHE = {"data": counts, "timestamp": now}
+            return counts
+        except Exception as e:
+            print(f"[Database] Supabase get_category_counts 실패: {e}")
+
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT category_code, COUNT(*) FROM news GROUP BY category_code")
-        return {row[0]: row[1] for row in cursor.fetchall()}
+        counts = {row[0]: row[1] for row in cursor.fetchall()}
+        _CATEGORY_COUNTS_CACHE = {"data": counts, "timestamp": now}
+        return counts
 
 
 async def get_total_news_count() -> int:
@@ -342,12 +382,42 @@ async def get_total_news_count() -> int:
 
 
 async def get_news_sources() -> List[Dict[str, Any]]:
-    """전체 언론사 출처 목록 및 기사 수 집계 (인덱스 활용)"""
+    """전체 언론사 출처 목록 및 기사 수 집계 (Supabase 페이징 수집 및 60초 캐시 지원)"""
+    global _SOURCES_CACHE
+    now = time.time()
+
+    if _SOURCES_CACHE["data"] and (now - _SOURCES_CACHE["timestamp"] < 60.0):
+        return _SOURCES_CACHE["data"]
+
+    if USE_SUPABASE and supabase_client:
+        try:
+            all_sources = []
+            for offset in range(0, 10000, 1000):
+                res = await asyncio.to_thread(
+                    lambda o=offset: supabase_client.table("news")
+                    .select("source")
+                    .range(o, o + 999)
+                    .execute()
+                )
+                rows = res.data or []
+                all_sources.extend([r["source"] for r in rows if r.get("source")])
+                if len(rows) < 1000:
+                    break
+
+            counts = Counter(all_sources)
+            result = [{"source": src, "count": cnt} for src, cnt in counts.most_common()]
+            _SOURCES_CACHE = {"data": result, "timestamp": now}
+            return result
+        except Exception as e:
+            print(f"[Database] Supabase get_news_sources 실패: {e}")
+
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT source, COUNT(*) as cnt FROM news GROUP BY source ORDER BY cnt DESC")
         rows = cursor.fetchall()
-        return [{"source": row[0], "count": row[1]} for row in rows]
+        result = [{"source": row[0], "count": row[1]} for row in rows]
+        _SOURCES_CACHE = {"data": result, "timestamp": now}
+        return result
 
 
 async def save_trend_keywords_batch(keywords: List[Dict[str, Any]]) -> int:

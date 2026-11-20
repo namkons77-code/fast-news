@@ -11,6 +11,7 @@ import {
   Newspaper
 } from 'lucide-react';
 import { formatTimeAgo, getCategoryTheme } from '../utils/formatters';
+import NewsImage from './NewsImage';
 
 export default function MagazineHero({
   headlineArticles = [],
@@ -210,27 +211,18 @@ export default function MagazineHero({
                   {/* 슬라이드 와이드 뷰포트 (높이 약 380px ~ 480px) */}
                   <div className="relative w-full h-[320px] sm:h-[400px] md:h-[460px] lg:h-[500px] bg-slate-900 overflow-hidden">
                     {/* 메인 이미지 */}
-                    {slide.image_url ? (
-                      <img
-                        src={slide.image_url}
-                        alt={slide.title}
-                        referrerPolicy="no-referrer"
-                        className={`w-full h-full object-cover object-center ${
-                          isCurrent
-                            ? 'group-hover:scale-105 transition-transform duration-700'
-                            : ''
-                        }`}
-                      />
-                    ) : (
-                      <div
-                        className={`w-full h-full bg-gradient-to-br ${theme.gradient} flex flex-col items-center justify-center text-white`}
-                      >
-                        <Newspaper className="w-16 h-16 opacity-40 mb-3" />
-                        <span className="text-base font-black opacity-90 tracking-wide">
-                          {slide.category} 헤드라인 포커스
-                        </span>
-                      </div>
-                    )}
+                    <NewsImage
+                      src={slide.image_url}
+                      alt={slide.title}
+                      categoryCode={slide.category_code}
+                      categoryName={slide.category}
+                      className={`w-full h-full object-cover object-top ${
+                        isCurrent
+                          ? 'group-hover:scale-105 transition-transform duration-700'
+                          : ''
+                      }`}
+                      fallbackType="hero"
+                    />
 
                     {/* TVING 시그니처 듀얼 그라디언트 (하단 + 좌측) */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent"></div>

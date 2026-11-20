@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, Newspaper, ChevronRight } from 'lucide-react';
 import { formatTimeAgo, getCategoryTheme } from '../utils/formatters';
+import NewsImage from './NewsImage';
 
 const FEATURED_SECTIONS = [
   { code: 'economy', label: '경제·금융 레이더', desc: '주식, 금리, 부동산, 거시경제 분석' },
@@ -71,18 +72,14 @@ export default function CategoryPulse({ allArticles = [], onSelectNews }) {
           >
             <div>
               <div className="relative aspect-16/10 rounded-2xl overflow-hidden bg-slate-100 mb-4">
-                {leadArticle.image_url ? (
-                  <img
-                    src={leadArticle.image_url}
-                    alt={leadArticle.title}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className={`w-full h-full bg-gradient-to-br ${theme.gradient} flex items-center justify-center text-white`}>
-                    <Newspaper className="w-12 h-12 opacity-60" />
-                  </div>
-                )}
+                <NewsImage
+                  src={leadArticle.image_url}
+                  alt={leadArticle.title}
+                  categoryCode={leadArticle.category_code}
+                  categoryName={leadArticle.category}
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  fallbackType="card"
+                />
                 <div className="absolute top-3 left-3">
                   <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border bg-white/90 ${theme.badge}`}>
                     {leadArticle.category}
@@ -136,11 +133,13 @@ export default function CategoryPulse({ allArticles = [], onSelectNews }) {
                 </div>
                 {art.image_url && (
                   <div className="w-18 h-18 rounded-xl overflow-hidden bg-slate-100 shrink-0">
-                    <img
+                    <NewsImage
                       src={art.image_url}
                       alt={art.title}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      categoryCode={art.category_code}
+                      categoryName={art.category}
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform"
+                      fallbackType="thumbnail"
                     />
                   </div>
                 )}
