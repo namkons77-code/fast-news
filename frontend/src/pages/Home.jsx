@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import BreakingTicker from '../components/BreakingTicker';
 import MagazineHero from '../components/MagazineHero';
-import CategoryPulse from '../components/CategoryPulse';
 import TrendingSidebar from '../components/TrendingSidebar';
 import NewsCard from '../components/NewsCard';
 import { fetchNews, fetchSources } from '../api/newsApi';
@@ -89,13 +88,7 @@ export default function Home({
               bookmarkedIds={bookmarkedIds}
             />
 
-            {/* 4. 분야별 심층 큐레이션 (경제, IT과학, 정치, 사회) */}
-            <CategoryPulse
-              allArticles={recentArticles}
-              onSelectNews={onSelectNews}
-            />
-
-            {/* 5. 2단 레이아웃: 좌측 실시간 최신 6선 카드 + 우측 트렌딩 사이드바 */}
+            {/* 4. 2단 레이아웃: 좌측 실시간 최신 6선 카드 + 우측 트렌딩 사이드바 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               {/* 좌측 (8칸): 최신 기사 카드 그리드 */}
               <div className="lg:col-span-8">
