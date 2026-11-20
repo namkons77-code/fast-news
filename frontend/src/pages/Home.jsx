@@ -38,20 +38,28 @@ export default function Home({
     loadHomeData();
   }, []);
 
-  // 사진이 있는 기사 중 가장 최근 기사를 메인 톱 헤드라인으로 선정
-  const topCover =
-    recentArticles.find((a) => a.image_url) || recentArticles[0];
+  // 사진이 있는 기사를 우선 선별하여 1면 헤드라인 파노라마 슬라이드로 구성 (최대 7편)
+  const heroArticles = [
+    ...recentArticles.filter((a) => a.image_url),
+    ...recentArticles.filter((a) => !a.image_url),
+  ].slice(0, 7);
 
-  // 서브 헤드라인 2건 (메인과 중복되지 않도록)
-  const subHeadlines = recentArticles
-    .filter((a) => a.id !== topCover?.id)
-    .slice(0, 2);
+  const heroIds = new Set(heroArticles.map((a) => a.id));
 
-  // 실시간 트렌딩 목록 5건
-  const trendingList = recentArticles.slice(3, 8);
+  // 실시간 트렌딩 브리핑 5건 (히어로와 겹치지 않게 우선 선별)
+  const trendingList = recentArticles
+    .filter((a) => !heroIds.has(a.id))
+    .slice(0, 5);
+
+  const heroAndTrendingIds = new Set([
+    ...heroArticles.map((a) => a.id),
+    ...trendingList.map((a) => a.id),
+  ]);
 
   // 실시간 종합 최신 기사 6선 (하단 그리드용)
-  const latestGrid = recentArticles.slice(8, 14);
+  const latestGrid = recentArticles
+    .filter((a) => !heroAndTrendingIds.has(a.id))
+    .slice(0, 6);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -72,10 +80,9 @@ export default function Home({
           </div>
         ) : (
           <>
-            {/* 3. 1면 톱 헤드라인 & 매거진 히어로 섹션 */}
+            {/* 3. 오늘의 1면 헤드라인 & 이슈 브리핑 (TVING 스타일 파노라마 뷰) */}
             <MagazineHero
-              topArticle={topCover}
-              subArticles={subHeadlines}
+              headlineArticles={heroArticles}
               trendingArticles={trendingList}
               onSelectNews={onSelectNews}
               onToggleBookmark={onToggleBookmark}
