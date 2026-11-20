@@ -2,14 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   Sparkles,
   RefreshCw,
-  Clock,
-  Database,
   BarChart3,
   Cloud,
   User,
   MapPin,
   Building2,
-  Calendar,
   Layers,
   ChevronRight,
   Info
@@ -18,7 +15,6 @@ import { fetchTrendKeywords, triggerTrendCrawl } from '../api/trendApi';
 import WordCloud from '../components/WordCloud';
 import TrendRankingTable from '../components/TrendRankingTable';
 import RelatedNewsDrawer from '../components/RelatedNewsDrawer';
-import { formatTimeAgo } from '../utils/formatters';
 
 const CATEGORIES = [
   '전체',
@@ -130,45 +126,6 @@ export default function TrendPage({ onSelectNews }) {
                 <RefreshCw className={`w-4 h-4 ${isCrawling ? 'animate-spin' : ''}`} />
                 <span>{isCrawling ? '키워드 분석 중...' : '지금 분석 갱신'}</span>
               </button>
-            </div>
-          </div>
-
-          {/* 주요 통계 카드 3종 */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-6">
-            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-                <Database className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-[11px] font-semibold text-slate-400 block">분석 대상 뉴스</span>
-                <span className="text-lg font-extrabold text-slate-900">
-                  {newsCount.toLocaleString()}건
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
-                <Clock className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-[11px] font-semibold text-slate-400 block">분석 기준 시각</span>
-                <span className="text-sm font-extrabold text-slate-900">
-                  {crawledAt ? formatTimeAgo(crawledAt) : '확인 중...'}
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
-                <Calendar className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-[11px] font-semibold text-slate-400 block">스케줄러 주기</span>
-                <span className="text-xs font-bold text-slate-900">
-                  00:30부터 3시간 간격
-                </span>
-              </div>
             </div>
           </div>
         </div>
