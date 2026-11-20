@@ -11,7 +11,7 @@ import {
   ChevronRight,
   Info
 } from 'lucide-react';
-import { fetchTrendKeywords, triggerTrendCrawl } from '../api/trendApi';
+import { fetchTrendKeywords } from '../api/trendApi';
 import WordCloud from '../components/WordCloud';
 import TrendRankingTable from '../components/TrendRankingTable';
 import RelatedNewsDrawer from '../components/RelatedNewsDrawer';
@@ -45,7 +45,6 @@ export default function TrendPage({ onSelectNews }) {
   const [crawledAt, setCrawledAt] = useState(null);
   const [schedulerInfo, setSchedulerInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isCrawling, setIsCrawling] = useState(false);
 
   // 클릭한 키워드 (관련 기사 드로어용)
   const [activeKeyword, setActiveKeyword] = useState(null);
@@ -73,20 +72,6 @@ export default function TrendPage({ onSelectNews }) {
     loadKeywords();
   }, [loadKeywords]);
 
-  // 수동 즉시 갱신 핸들러
-  const handleTriggerCrawl = async () => {
-    if (isCrawling) return;
-    setIsCrawling(true);
-    try {
-      await triggerTrendCrawl();
-      await loadKeywords();
-    } catch (err) {
-      console.error('수동 크롤링 에러:', err);
-    } finally {
-      setIsCrawling(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-50/50 pb-20">
       {/* 1. 상단 히어로 & 헤더 */}
@@ -110,22 +95,6 @@ export default function TrendPage({ onSelectNews }) {
               <p className="text-xs sm:text-sm text-slate-500 mt-1.5 max-w-2xl leading-relaxed">
                 매일 전국 54개 언론사 뉴스에서 빅데이터 AI로 추출한 주요 <strong className="text-slate-700">인물(PS)·기관(OG)·장소(LC)</strong>를 분석하여 3시간 간격(매일 00:30부터 3시간 주기)으로 제공합니다.
               </p>
-            </div>
-
-            {/* 수동 크롤링 버튼 및 상태 요약 */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handleTriggerCrawl}
-                disabled={isCrawling}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white shadow-sm transition active:scale-95 ${
-                  isCrawling
-                    ? 'bg-blue-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20'
-                }`}
-              >
-                <RefreshCw className={`w-4 h-4 ${isCrawling ? 'animate-spin' : ''}`} />
-                <span>{isCrawling ? '키워드 분석 중...' : '지금 분석 갱신'}</span>
-              </button>
             </div>
           </div>
         </div>
