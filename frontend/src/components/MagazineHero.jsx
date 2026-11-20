@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   ChevronLeft,
   ChevronRight,
@@ -9,23 +8,9 @@ import {
   Bookmark,
   ArrowUpRight,
   Flame,
-  Newspaper,
-  Tag
+  Newspaper
 } from 'lucide-react';
 import { formatTimeAgo, getCategoryTheme } from '../utils/formatters';
-
-const POPULAR_KEYWORDS = [
-  '인공지능',
-  '금리',
-  '반도체',
-  '대통령',
-  '국회',
-  '부동산',
-  '수능',
-  '미국',
-  '우주',
-  '축구',
-];
 
 export default function MagazineHero({
   headlineArticles = [],
@@ -36,8 +21,6 @@ export default function MagazineHero({
   onToggleBookmark,
   bookmarkedIds = new Set(),
 }) {
-  const navigate = useNavigate();
-
   // 슬라이드 대상 기사 목록 조합 (headlineArticles 우선, fallback으로 topArticle + subArticles)
   const items = React.useMemo(() => {
     if (headlineArticles && headlineArticles.length > 0) {
@@ -436,36 +419,6 @@ export default function MagazineHero({
           </div>
         </div>
       )}
-
-      {/* 5. 오늘의 핫 토픽 키워드 (실시간 이슈 브리핑 TOP 5 바로 아래로 이동) */}
-      <div className="mt-4 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <Tag className="w-4 h-4 text-blue-600" />
-            <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-              오늘의 핫 토픽 키워드
-            </h3>
-            <span className="text-xs text-slate-400 hidden sm:inline">
-              관심 있는 키워드를 누르면 관련 기사로 바로 이동합니다.
-            </span>
-          </div>
-          <span className="text-[11px] text-blue-600 font-semibold hidden md:inline">
-            키워드 클릭 시 검색 피드 연동
-          </span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {POPULAR_KEYWORDS.map((kw) => (
-            <button
-              key={kw}
-              onClick={() => navigate(`/feed?search=${encodeURIComponent(kw)}`)}
-              className="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200/90 hover:border-blue-300 transition shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer"
-            >
-              #{kw}
-            </button>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }
