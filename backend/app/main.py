@@ -4,21 +4,25 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import news, crawler
+from app.routers import news, crawler, trends
 from app.scheduler import news_scheduler
 from app.database import get_total_news_count
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 1. APScheduler 시작 (15분 주기 크롤링 등록)
+    # 1. APScheduler 시작 (15분 뉴스 주기 + 매일 00:30부터 3시간 간격 오늘의 키워드)
     news_scheduler.start()
 
-    # 2. 서버 기동 시 최신 기사 즉시 크롤링 백그라운드 실행
+    # 2. 서버 기동 시 최신 기사 및 오늘의 키워드 즉시 크롤링 백그라운드 실행
     if settings.CRAWL_ON_STARTUP:
         async def initial_crawl_task():
-            print("[Lifespan] 서버 시작 즉시 최신 기사 크롤링을 백그라운드로 실행합니다...")
-            await news_scheduler.execute_crawl(trigger_type="startup")
+            print("[Lifespan] 서버 시작 즉시 최신 기사 및 오늘의 키워드 크롤링을 백그라운드로 실행합니다...")
+            await asyncio.gather(
+                news_scheduler.execute_crawl(trigger_type="startup"),
+                news_scheduler.execute_trend_crawl(trigger_type="startup"),
+                return_exceptions=True
+            )
 
         asyncio.create_task(initial_crawl_task())
 
@@ -47,6 +51,7 @@ app.add_middleware(
 # 라우터 등록
 app.include_router(news.router)
 app.include_router(crawler.router)
+app.include_router(trends.router)
 
 
 @app.get("/")

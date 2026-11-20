@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Newspaper, Flame, LayoutGrid } from 'lucide-react';
+import { Newspaper, Flame, LayoutGrid, Sparkles } from 'lucide-react';
 
 export default function Navbar() {
   return (
@@ -57,6 +57,19 @@ export default function Navbar() {
                 <LayoutGrid className="w-3.5 h-3.5" />
                 <span>전체 피드 (/feed)</span>
               </NavLink>
+              <NavLink
+                to="/trend"
+                className={({ isActive }) =>
+                  `flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
+                    isActive
+                      ? 'bg-white text-blue-600 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`
+                }
+              >
+                <Sparkles className="w-3.5 h-3.5 text-blue-500" />
+                <span>오늘의 키워드 (/trend)</span>
+              </NavLink>
             </nav>
           </div>
 
@@ -86,7 +99,18 @@ export default function Navbar() {
             }
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span>전체 기사 (/feed)</span>
+            <span>전체 피드</span>
+          </NavLink>
+          <NavLink
+            to="/trend"
+            className={({ isActive }) =>
+              `flex items-center gap-1 font-bold py-1 px-3 rounded-lg ${
+                isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600'
+              }`
+            }
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>키워드 트렌드</span>
           </NavLink>
         </div>
       </div>

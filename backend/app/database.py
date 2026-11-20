@@ -80,6 +80,24 @@ def init_sqlite_db():
                 finished_at TEXT
             )
         """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS trend_keywords (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                category_name TEXT NOT NULL,
+                category_code TEXT NOT NULL,
+                entity_name TEXT NOT NULL,
+                entity_type TEXT NOT NULL,
+                count INTEGER NOT NULL,
+                step TEXT,
+                news_count INTEGER DEFAULT 0,
+                crawled_at TEXT NOT NULL,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_trend_cat_crawl ON trend_keywords(category_name, crawled_at DESC)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_trend_type ON trend_keywords(entity_type)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_trend_crawl ON trend_keywords(crawled_at DESC)")
         conn.commit()
 
 
@@ -330,3 +348,125 @@ async def get_news_sources() -> List[Dict[str, Any]]:
         cursor.execute("SELECT source, COUNT(*) as cnt FROM news GROUP BY source ORDER BY cnt DESC")
         rows = cursor.fetchall()
         return [{"source": row[0], "count": row[1]} for row in rows]
+
+
+async def save_trend_keywords_batch(keywords: List[Dict[str, Any]]) -> int:
+    """빅카인즈 오늘의 키워드 배치 저장 (Supabase & SQLite)"""
+    if not keywords:
+        return 0
+
+    inserted_count = 0
+
+    # 1. Supabase 시도 (테이블 존재 시)
+    if USE_SUPABASE and supabase_client:
+        try:
+            chunk_size = 100
+            for i in range(0, len(keywords), chunk_size):
+                chunk = keywords[i:i + chunk_size]
+                supabase_client.table("trend_keywords").insert(chunk).execute()
+        except Exception as e:
+            # Supabase 테이블이 아직 없거나 권한 오류 시 무시하고 SQLite로 진행
+            pass
+
+    # 2. SQLite 고속 배치 저장
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        now_str = datetime.now(timezone.utc).isoformat()
+        rows = [
+            (
+                k.get("category_name"),
+                k.get("category_code"),
+                k.get("entity_name"),
+                k.get("entity_type"),
+                k.get("count", 0),
+                k.get("step", "step1"),
+                k.get("news_count", 0),
+                k.get("crawled_at", now_str),
+                now_str,
+            )
+            for k in keywords
+        ]
+
+        cursor.executemany(
+            """
+            INSERT INTO trend_keywords 
+            (category_name, category_code, entity_name, entity_type, count, step, news_count, crawled_at, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            rows
+        )
+        inserted_count = cursor.rowcount
+        conn.commit()
+
+    return inserted_count
+
+
+async def get_latest_trend_keywords(
+    category: Optional[str] = None,
+    entity_type: Optional[str] = None,
+    target_timestamp: Optional[str] = None
+) -> Dict[str, Any]:
+    """빅카인즈 오늘의 키워드 최신 (또는 특정 스냅샷) 조회"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+
+        # 1. 기준 timestamp 결정 (지정 없으면 가장 최근 crawled_at)
+        if not target_timestamp:
+            cursor.execute("SELECT crawled_at FROM trend_keywords ORDER BY crawled_at DESC LIMIT 1")
+            row = cursor.fetchone()
+            if not row:
+                return {
+                    "crawled_at": None,
+                    "news_count": 0,
+                    "total": 0,
+                    "keywords": []
+                }
+            target_timestamp = row[0]
+
+        # 2. 쿼리 구성
+        sql = "SELECT category_name, category_code, entity_name, entity_type, count, step, news_count, crawled_at FROM trend_keywords WHERE crawled_at = ?"
+        params: List[Any] = [target_timestamp]
+
+        if category and category != "전체":
+            sql += " AND category_name = ?"
+            params.append(category)
+
+        if entity_type and entity_type != "ALL":
+            sql += " AND entity_type = ?"
+            params.append(entity_type)
+
+        sql += " ORDER BY count DESC"
+        cursor.execute(sql, params)
+        rows = cursor.fetchall()
+
+        news_count = rows[0]["news_count"] if rows else 0
+
+        keywords = [
+            {
+                "category_name": r["category_name"],
+                "category_code": r["category_code"],
+                "entity_name": r["entity_name"],
+                "entity_type": r["entity_type"],
+                "count": r["count"],
+                "step": r["step"],
+                "news_count": r["news_count"],
+                "crawled_at": r["crawled_at"],
+            }
+            for r in rows
+        ]
+
+        return {
+            "crawled_at": target_timestamp,
+            "news_count": news_count,
+            "total": len(keywords),
+            "keywords": keywords
+        }
+
+
+async def get_trend_keyword_timestamps() -> List[str]:
+    """저장된 키워드 스냅샷 타임스탬프 이력 목록"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT DISTINCT crawled_at FROM trend_keywords ORDER BY crawled_at DESC LIMIT 20")
+        rows = cursor.fetchall()
+        return [r[0] for r in rows]

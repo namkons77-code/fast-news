@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import FeedPage from './pages/FeedPage';
+import TrendPage from './pages/TrendPage';
 import NewsModal from './components/NewsModal';
 import CrawlStatusModal from './components/CrawlStatusModal';
 import BookmarksModal from './components/BookmarksModal';
@@ -152,6 +153,12 @@ export default function App() {
               }
             />
 
+            {/* 빅카인즈 오늘의 키워드 워드클라우드 (/trend) */}
+            <Route
+              path="/trend"
+              element={<TrendPage onSelectNews={(n) => setSelectedNews(n)} />}
+            />
+
             {/* 기존 /frontend 접속 시 /feed 로 자동 리다이렉트 */}
             <Route path="/frontend" element={<Navigate to="/feed" replace />} />
 
@@ -167,6 +174,8 @@ export default function App() {
               <a href="/" className="hover:text-blue-600">추천 홈 (Magazine)</a>
               <span>·</span>
               <a href="/feed" className="hover:text-blue-600">전체 기사 피드 (/feed)</a>
+              <span>·</span>
+              <a href="/trend" className="hover:text-blue-600">오늘의 키워드 (/trend)</a>
               <span>·</span>
               <button onClick={() => setShowBookmarksModal(true)} className="hover:text-blue-600">
                 내 스크랩 ({bookmarks.length})
