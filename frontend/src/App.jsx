@@ -168,13 +168,17 @@ export default function App() {
               <span>·</span>
               <a href="/feed" className="hover:text-blue-600">전체 기사 피드 (/feed)</a>
               <span>·</span>
+              <button onClick={() => setShowBookmarksModal(true)} className="hover:text-blue-600">
+                내 스크랩 ({bookmarks.length})
+              </button>
+              <span>·</span>
               <button onClick={() => setShowStatusModal(true)} className="hover:text-blue-600">스케줄러 상태</button>
             </div>
             <p className="font-semibold text-slate-500">
               FastNews — 빅카인즈(BigKinds) 54개 언론사 & 카테고리별 RSS 실시간 크롤링 플랫폼
             </p>
             <p>
-              정치 · 경제 · 문화 · 사회 · 국제 · 지역 · 스포츠 · IT과학 (APScheduler 1시간 주기 자동 크롤링 · Supabase DB)
+              정치 · 경제 · 문화 · 사회 · 국제 · 지역 · 스포츠 · IT과학 (APScheduler 15분 주기 자동 크롤링)
             </p>
             <p className="text-[11px] text-slate-400">
               본 사이트에서 제공하는 뉴스는 한국언론진흥재단 빅카인즈 및 주요 언론사 RSS 피드를 통해 수집된 것으로 저작권은 각 언론사에 있습니다.

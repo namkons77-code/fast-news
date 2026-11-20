@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { Zap, ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { formatTimeAgo } from '../utils/formatters';
 
-export default function BreakingTicker({ articles = [], onSelectNews }) {
+function BreakingTicker({ articles = [], onSelectNews }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -92,3 +92,5 @@ export default function BreakingTicker({ articles = [], onSelectNews }) {
     </div>
   );
 }
+
+export default memo(BreakingTicker);

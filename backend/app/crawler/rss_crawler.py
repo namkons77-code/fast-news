@@ -12,11 +12,13 @@ from app.crawler.feeds import CATEGORIES
 
 
 def clean_html(raw_html: Optional[str]) -> str:
-    """HTML 태그 제거 및 텍스트 정리"""
+    """HTML 태그 제거 및 텍스트 정리 (고속 패스 포함)"""
     if not raw_html:
         return ""
     # HTML 엔티티 언이스케이프
     unescaped = html.unescape(raw_html)
+    if "<" not in unescaped:
+        return re.sub(r"\s+", " ", unescaped).strip()
     soup = BeautifulSoup(unescaped, "html.parser")
     # 불필요한 태그 제거
     for element in soup(["script", "style", "noscript"]):

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { ExternalLink, Clock, Newspaper, ArrowUpRight } from 'lucide-react';
 import { formatTimeAgo, getCategoryTheme } from '../utils/formatters';
 
-export default function NewsCard({ news, onClick }) {
+function NewsCard({ news, onClick }) {
   const [imgError, setImgError] = useState(false);
   const theme = getCategoryTheme(news.category_code);
 
@@ -19,6 +19,7 @@ export default function NewsCard({ news, onClick }) {
             alt={news.title}
             onError={() => setImgError(true)}
             loading="lazy"
+            decoding="async"
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
@@ -86,3 +87,5 @@ export default function NewsCard({ news, onClick }) {
     </article>
   );
 }
+
+export default memo(NewsCard);

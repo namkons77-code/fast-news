@@ -27,10 +27,12 @@ HEADERS = {
 
 
 def clean_text(raw_text: Optional[str]) -> str:
-    """HTML 태그 제거 및 텍스트 정리"""
+    """HTML 태그 제거 및 텍스트 정리 (고속 패스 포함)"""
     if not raw_text:
         return ""
     unescaped = html.unescape(raw_text)
+    if "<" not in unescaped:
+        return re.sub(r"\s+", " ", unescaped).strip()
     # <br/> 태그 공백 처리
     unescaped = unescaped.replace("<br/>", " ").replace("<br>", " ")
     soup = BeautifulSoup(unescaped, "html.parser")

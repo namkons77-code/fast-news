@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import BreakingTicker from '../components/BreakingTicker';
 import MagazineHero from '../components/MagazineHero';
@@ -17,47 +17,51 @@ export default function Home({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
     async function loadHomeData() {
       setLoading(true);
       try {
-        // 최신 뉴스 30건 로드 (헤드라인, 서브, 분야별 큐레이션, 실시간 속보 등에 분배)
         const [newsRes, sourcesRes] = await Promise.all([
           fetchNews({ page: 1, limit: 30 }),
           fetchSources(),
         ]);
-        setRecentArticles(newsRes.data || []);
-        setSourcesList(sourcesRes || []);
+        if (mounted) {
+          setRecentArticles(newsRes.data || []);
+          setSourcesList(sourcesRes || []);
+        }
       } catch (err) {
         console.error('홈 데이터 로드 에러:', err);
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     }
     loadHomeData();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  // 사진이 있는 기사를 우선 선별하여 1면 헤드라인 파노라마 슬라이드로 구성 (최대 7편)
-  const heroArticles = [
-    ...recentArticles.filter((a) => a.image_url),
-    ...recentArticles.filter((a) => !a.image_url),
-  ].slice(0, 7);
+  // 사진이 있는 기사를 우선 선별하여 1면 헤드라인, 이슈 브리핑, 최신 그리드로 분배 (메모이제이션)
+  const { heroArticles, trendingList, latestGrid } = useMemo(() => {
+    const hero = [
+      ...recentArticles.filter((a) => a.image_url),
+      ...recentArticles.filter((a) => !a.image_url),
+    ].slice(0, 7);
 
-  const heroIds = new Set(heroArticles.map((a) => a.id));
+    const hIds = new Set(hero.map((a) => a.id));
 
-  // 실시간 트렌딩 브리핑 5건 (히어로와 겹치지 않게 우선 선별)
-  const trendingList = recentArticles
-    .filter((a) => !heroIds.has(a.id))
-    .slice(0, 5);
+    const trending = recentArticles
+      .filter((a) => !hIds.has(a.id))
+      .slice(0, 5);
 
-  const heroAndTrendingIds = new Set([
-    ...heroArticles.map((a) => a.id),
-    ...trendingList.map((a) => a.id),
-  ]);
+    const usedIds = new Set([...hIds, ...trending.map((a) => a.id)]);
 
-  // 실시간 종합 최신 기사 (전체 너비 3열 그리드용 9건)
-  const latestGrid = recentArticles
-    .filter((a) => !heroAndTrendingIds.has(a.id))
-    .slice(0, 9);
+    const grid = recentArticles
+      .filter((a) => !usedIds.has(a.id))
+      .slice(0, 9);
+
+    return { heroArticles: hero, trendingList: trending, latestGrid: grid };
+  }, [recentArticles]);
 
   return (
     <div className="min-h-screen flex flex-col">
