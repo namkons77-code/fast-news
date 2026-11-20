@@ -25,9 +25,9 @@ export default function NewsModal({ news, onClose }) {
   };
 
   const contentFontSizeClass = {
-    md: 'text-base leading-relaxed',
-    lg: 'text-lg leading-[1.8]',
-    xl: 'text-xl leading-[1.85]',
+    md: 'text-[15px] sm:text-base leading-relaxed',
+    lg: 'text-[17px] sm:text-[19px] leading-[1.85]',
+    xl: 'text-[20px] sm:text-[23px] leading-[1.95]',
   }[fontSize];
 
   return (
@@ -54,21 +54,33 @@ export default function NewsModal({ news, onClose }) {
             <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600 mr-1">
               <button
                 onClick={() => setFontSize('md')}
-                className={`px-2 py-0.5 rounded-lg transition ${fontSize === 'md' ? 'bg-white text-blue-600 shadow-xs' : 'hover:text-slate-900'}`}
+                className={`px-2.5 py-1 rounded-lg transition-all font-bold text-xs ${
+                  fontSize === 'md'
+                    ? 'bg-white text-blue-600 shadow-sm ring-1 ring-slate-200'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                }`}
                 title="글자 크기 보통"
               >
                 가
               </button>
               <button
                 onClick={() => setFontSize('lg')}
-                className={`px-2 py-0.5 rounded-lg transition text-sm ${fontSize === 'lg' ? 'bg-white text-blue-600 shadow-xs' : 'hover:text-slate-900'}`}
+                className={`px-2.5 py-1 rounded-lg transition-all font-bold text-sm ${
+                  fontSize === 'lg'
+                    ? 'bg-white text-blue-600 shadow-sm ring-1 ring-slate-200'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                }`}
                 title="글자 크기 크게 (권장)"
               >
                 가+
               </button>
               <button
                 onClick={() => setFontSize('xl')}
-                className={`px-2 py-0.5 rounded-lg transition text-base ${fontSize === 'xl' ? 'bg-white text-blue-600 shadow-xs' : 'hover:text-slate-900'}`}
+                className={`px-2.5 py-1 rounded-lg transition-all font-black text-base ${
+                  fontSize === 'xl'
+                    ? 'bg-white text-blue-600 shadow-sm ring-1 ring-slate-200'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                }`}
                 title="글자 크기 아주 크게"
               >
                 가++
@@ -126,17 +138,20 @@ export default function NewsModal({ news, onClose }) {
           {/* 요약 및 본문 */}
           <div className="space-y-5 text-slate-800 break-keep">
             <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 text-slate-800">
-              <div className="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1.5">
-                핵심 기사 요약
+              <div className="text-xs text-blue-600 font-bold uppercase tracking-wider mb-2">
+                기사 요약
               </div>
-              <p className="text-[15px] sm:text-base leading-relaxed font-medium text-slate-700">
+              <p className={`${contentFontSizeClass} font-medium text-slate-700 transition-all duration-200`}>
                 {news.summary || '요약 정보가 없습니다.'}
               </p>
             </div>
 
             {news.content && news.content !== news.summary && (
               <div className="pt-2 text-slate-800">
-                <p className={`${contentFontSizeClass} whitespace-pre-line text-slate-800 font-normal`}>
+                <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">
+                  기사 상세 본문
+                </div>
+                <p className={`${contentFontSizeClass} whitespace-pre-line text-slate-800 font-normal transition-all duration-200`}>
                   {news.content}
                 </p>
               </div>
